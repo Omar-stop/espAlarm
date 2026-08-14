@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h> //1.54 Inch Display SPI ST7789
+#include <Adafruit_SSD1306.h>
 #include <RTClib.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -165,7 +165,6 @@ void printTemperature(DeviceAddress deviceAddress)
 }
 
 void setup() {
-  // put your setup code here, to run once:
 
 //////////////////////////////////////////////////////
       Serial.begin(115200);
@@ -245,9 +244,9 @@ void setup() {
 
 }
 
-int choice2 = 0;
-
 int list(const char* listArray[], int arraySize, bool& previousPage){
+
+  static int choice = 0;
 
   btnUp.update();
   btnOk.update();
@@ -259,24 +258,24 @@ int list(const char* listArray[], int arraySize, bool& previousPage){
   if(!initialized){
 
     previousPage = 0;
-    choice2 = 0;
+    choice = 0;
     menu2Dirty = true;
 
   }
 
   if(btnUp.pressed()){
     
-    choice2++; 
+    choice++; 
 
-    if(choice2 >= arraySize){choice2 = 0;};
+    if(choice >= arraySize){choice = 0;};
 
     menu2Dirty = true;
 
   }else if(btnDown.pressed()){
 
-    choice2--;
+    choice--;
 
-    if(choice2 < 0){choice2 = arraySize - 1;};
+    if(choice < 0){choice = arraySize - 1;};
 
     menu2Dirty = true;
 
@@ -290,7 +289,7 @@ int list(const char* listArray[], int arraySize, bool& previousPage){
 
     for(int i = 0; i < arraySize; i++){
 
-      if(choice2 == i) display.print("> ");
+      if(choice == i) display.print("> ");
       display.println(listArray[i]);
       
     }
@@ -302,10 +301,10 @@ int list(const char* listArray[], int arraySize, bool& previousPage){
 
   if(btnOk.pressed()){
 
-    Serial.println("bobibobdipopopopopopp");
+    Serial.println("button ok pressed");
     previousPage = 1;
     initialized = false;
-    return choice2;
+    return choice;
 
   }
 
@@ -637,8 +636,6 @@ void checkAlarms(){
       Serial.println("alarm 1 ON wake up dude");
       mp3.playFolder(1, 1);
 
-      //playMelodyLong(); Delay problem
-
     }
 
     if(currentMinute >= alarm2Start && currentMinute < alarm2End){
@@ -646,8 +643,6 @@ void checkAlarms(){
       //play our mp3 file
       Serial.println("alarm 2 ON wake up dude");
       mp3.playFolder(1, 1);
-
-      //playMelodyLong(); Delay problem
 
     }
 
@@ -756,74 +751,3 @@ void loop() {
   }
 
 }
-
-
-void playMelodyLong() {
-
-  int melody[] = {
-    523, 659, 784, 659, 523, 587, 659, 784,
-    880, 784, 659, 523, 587, 659, 523, 494,
-    523, 659, 784, 880, 988, 880, 784, 659,
-    698, 784, 880, 784, 659, 523, 587, 523
-  };
-
-  int durations[] = {
-    200, 200, 300, 200, 200, 200, 300, 400,
-    200, 200, 300, 200, 200, 200, 300, 400,
-    200, 200, 300, 200, 300, 200, 300, 400,
-    200, 200, 300, 200, 200, 200, 300, 600
-  };
-
-  int length = sizeof(melody) / sizeof(melody[0]);
-
-  for (int i = 0; i < length; i++) {
-    tone(BUZZER_PIN, melody[i], durations[i]);
-    delay(durations[i] * 1.3);
-  }
-
-  noTone(BUZZER_PIN);
-}
-
-
-// #include <Wire.h>
-// #include <Adafruit_GFX.h>
-// #include <Adafruit_SSD1306.h>
-
-// #define SCREEN_WIDTH 128
-// #define SCREEN_HEIGHT 64
-// #define OLED_ADDR 0x3C
-
-// // I2C pins for your ESP32
-// #define SDA_PIN 21
-// #define SCL_PIN 22
-
-// Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
-
-// void setup() {
-//   Wire.begin(SDA_PIN, SCL_PIN);
-
-//   if(!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)){
-//     Serial.println(F("OLED init failed!"));
-//     while(true);
-//   }
-
-//   display.clearDisplay();
-// }
-
-// void loop() {
-//   display.clearDisplay();
-
-//   // Draw a filled wave pattern
-//   for(int x = 0; x < SCREEN_WIDTH; x++){
-//     // Simple sine wave
-//     float y = 20.0 * sin((x + millis() / 10.0) * 0.1) + 32; 
-    
-//     // Fill from bottom of screen up to the wave
-//     for(int yy = (int)y; yy < SCREEN_HEIGHT; yy++){
-//       display.drawPixel(x, yy, SSD1306_WHITE);
-//     }
-//   }
-
-//   display.display();
-//    // controls animation speed
-// }

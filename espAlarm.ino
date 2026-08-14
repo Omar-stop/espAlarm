@@ -662,8 +662,8 @@ void loop() {
   btnOk.update();
   btnDown.update();
 
-  checkAlarms(); // triggers alarm way too fast back to back preventing the speaker from playing the sound, must make a time limiter function to wait for atleast 10 to 30 seconds
-
+  checkAlarms();
+  
   if (inViewTime) {
     ViewTime();
     return;
